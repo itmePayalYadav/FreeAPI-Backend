@@ -81,6 +81,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
+RAZORPAY_KEY_ID = "rzp_test_RQ8XKvSIcduPjZ"
+RAZORPAY_KEY_SECRET = "ebdNzlQ0f7wGQTKeIYvELfUi"
+
+RAZORPAY_WEBHOOK_SECRET="https://sheila-unchalked-cytoarchitecturally.ngrok-free/api/payments/webhooks/razorpay/"
+RAZORPAY_WEBHOOK_= "whsec_itme.payalyadav@123"
+
+STRIPE_SECRET_KEY = "sk_test_xxxxxxxxxxxxx"
+STRIPE_WEBHOOK_SECRET = "whsec_xxxxxxxxxxxxx"
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -93,16 +101,34 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    # ---------------------------
+    # Authentication & Permissions
+    # ---------------------------
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+
+    # ---------------------------
+    # Pagination
+    # ---------------------------
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.CustomPagination",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+
+    # ---------------------------
+    # Filters (Search & Ordering)
+    # ---------------------------
+    "DEFAULT_FILTER_BACKENDS": [
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }

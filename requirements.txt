@@ -1,6 +1,8 @@
 django
 djangorestframework
-markdown      
+markdown
 django-filter
 Pillow
 djangorestframework-simplejwt
+razorpay
+stripe

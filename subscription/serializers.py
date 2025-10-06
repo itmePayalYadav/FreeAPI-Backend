@@ -1,16 +1,30 @@
 from rest_framework import serializers
 from .models import SubscriptionPlan, UserSubscription
+from apis.serializers import APISerializer
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
+    apis = APISerializer(many=True, read_only=True)
+    
     class Meta:
         model = SubscriptionPlan
-        fields = "__all__"
+        fields = ["id", "name", "description", "price", "duration_days", "is_active", "apis"]
 
 class UserSubscriptionSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True) 
+    username = serializers.CharField(source="user.username", read_only=True)
+    plan_name = serializers.CharField(source="plan.name", read_only=True)
+
     class Meta:
         model = UserSubscription
-        fields = "__all__"
-        read_only_fields = ["user", "active", "start_date", "end_date"]
-    
-
+        fields = [
+            "id",
+            "user",
+            "username",
+            "plan",
+            "plan_name",
+            "start_date",
+            "end_date",
+            "active",
+            "payment_id",
+            "created_at",
+        ]
+        read_only_fields = ["end_date", "created_at", "user", "plan_name"]

@@ -3,12 +3,14 @@ from django.conf import settings
 from django.utils import timezone
 from accounts.models import User
 from core.models import BaseModel
+from apis.models import API
 
 class SubscriptionPlan(BaseModel):
     name = models.CharField(max_length=50)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     duration_days = models.IntegerField()
+    apis = models.ManyToManyField(API, related_name="plans") 
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

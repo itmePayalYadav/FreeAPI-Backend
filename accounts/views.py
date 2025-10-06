@@ -42,7 +42,6 @@ class LoginUserView(APIView):
         identifier = request.data.get("identifier")
         password = request.data.get("password")
     
-
         if not identifier or not password:
             return api_error(
                 errors={"detail": "Username/ Email and password are required."},

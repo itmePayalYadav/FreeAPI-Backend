@@ -8,6 +8,7 @@ from .views import (
     SubscribeToPlanCreateView,
     UserSubscriptionUsageView,
     AdminUserSubscriptionListView,
+    AdminDetailSubscriptionView,
     AdminUpdateSubscriptionView,
     AdminDeleteSubscriptionView,
     SubscriptionPlanListByIdAdminView
@@ -16,22 +17,19 @@ from .views import (
 app_name = "subscription"
 
 urlpatterns = [
-    # ----------------------------
-    # General / Premium Users
-    # ----------------------------
-    path("plans/active/", ActiveSubscriptionPlanListView.as_view(), name="active_subscription_plans"),
-    path("subscribe/", SubscribeToPlanCreateView.as_view(), name="subscribe_to_plan"),
-    path("usage/", UserSubscriptionUsageView.as_view(), name="user_subscription_usage"),
-
-    # ----------------------------
-    # Admin Only
-    # ----------------------------
-    path("plans/", SubscriptionPlanListAdminView.as_view(), name="subscription_plan_list_admin"),
-    path("plans/create/", SubscriptionPlanCreateAdminView.as_view(), name="subscription_plan_create_admin"),
-    path("plans/<uuid:pk>/list/", SubscriptionPlanListByIdAdminView.as_view(), name="subscription_plan_update_admin"),
-    path("plans/<uuid:pk>/update/", SubscriptionPlanUpdateAdminView.as_view(), name="subscription_plan_update_admin"),
-    path("plans/<uuid:pk>/delete/", SubscriptionPlanDeleteAdminView.as_view(), name="subscription_plan_delete_admin"),
-    path("", AdminUserSubscriptionListView.as_view(), name="admin_user_subscription_list"),
-    path("<uuid:pk>/update/", AdminUpdateSubscriptionView.as_view(), name="admin_update_subscription"),
-    path("<uuid:pk>/delete/", AdminDeleteSubscriptionView.as_view(), name="admin_delete_subscription"),
+    # Plans
+    path("plans/active/", ActiveSubscriptionPlanListView.as_view(), name="active-plans"),
+    path("plans/", SubscriptionPlanListAdminView.as_view(), name="admin-plans"),
+    path("plans/create/", SubscriptionPlanCreateAdminView.as_view(), name="create-plan"),
+    path("plans/<uuid:pk>/detail/", SubscriptionPlanListByIdAdminView.as_view(), name="plan-detail"),
+    path("plans/<uuid:pk>/update/", SubscriptionPlanUpdateAdminView.as_view(), name="update-plan"),
+    path("plans/<uuid:pk>/delete/", SubscriptionPlanDeleteAdminView.as_view(), name="delete-plan"),
+    
+    # Subscribe
+    path("subscribe/", SubscribeToPlanCreateView.as_view(), name="subscribe-plan"),
+    path("me/", UserSubscriptionUsageView.as_view(), name="my-subscriptions"),
+    path("admin/", AdminUserSubscriptionListView.as_view(), name="all-subscriptions"),
+    path("<uuid:pk>/detail/", AdminDetailSubscriptionView.as_view(), name="detail-subscription"),
+    path("<uuid:pk>/update/", AdminUpdateSubscriptionView.as_view(), name="update-subscription"),
+    path("<uuid:pk>/delete/", AdminDeleteSubscriptionView.as_view(), name="delete-subscription"),
 ]
