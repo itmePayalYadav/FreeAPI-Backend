@@ -12,9 +12,9 @@ from apis.models import API
 # List all active subscription plans
 # ----------------------------
 class ActiveSubscriptionPlanListView(generics.ListAPIView):
-    queryset = SubscriptionPlan.objects.filter(is_active=True)
+    queryset = SubscriptionPlan.objects.all()
     serializer_class = SubscriptionPlanSerializer
-    permission_classes = [IsAuthenticatedUser]
+    permission_classes = [permissions.AllowAny]
     
     search_fields = ["name", "description"]
     ordering_fields = ["price", "duration_days", "created_at"]

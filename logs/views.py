@@ -1,124 +1,104 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from django.utils import timezone
-from .models import APIRequestLog
+from logs.models import APIRequestLog
 from apis.models import API
-from .serializers import APIRequestLogSerializer
+from logs.serializers import APIRequestLogSerializer
 from core.utils import api_success, api_error
+from django.db.models import Count
 from accounts.permissions import IsAdminUser, IsAuthenticatedUser
-
 
 # ==========================================
 # USER API LOG LIST
 # ==========================================
 class UserAPIRequestLogListView(generics.ListAPIView):
+    queryset = APIRequestLog.objects.filter(is_deleted=False)
     serializer_class = APIRequestLogSerializer
     permission_classes = [IsAuthenticatedUser]
-    search_fields = ["api__name", "status_code"]
+    
+    search_fields = ["user_name", "api_name", "status_code"]
     ordering_fields = ["request_time", "status_code"]
     ordering = ["-request_time"]
-
-    def get_queryset(self):
-        queryset = APIRequestLog.objects.filter(user=self.request.user)
-        api_filter = self.request.query_params.get("api")
-        status_filter = self.request.query_params.get("status_code")
-
-        if api_filter:
-            queryset = queryset.filter(api__id=api_filter)
-        if status_filter:
-            queryset = queryset.filter(status_code=status_filter)
-
-        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
-        if page:
+        if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
-        return api_success(data=serializer.data, message="User API logs fetched successfully")
-
+        return api_success(data=serializer.data, message="API logs fetched successfully")
 
 # ==========================================
 # USER API USAGE COUNT
 # ==========================================
 class UserAPIUsageCountView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticatedUser]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        api_id = request.query_params.get("api_id")
-        days = int(request.query_params.get("days", 30))
+        usage_data = (
+            APIRequestLog.objects
+            .filter(user=request.user, is_deleted=False)
+            .values(
+                "api__id",
+                "api__name",
+                "api__category__name",
+                "api__method",
+                "api__is_premium",
+            )
+            .annotate(request_count=Count("id"))
+            .order_by("-request_count")
+        )
 
-        if not api_id:
-            return api_error(message="api_id is required")
-
-        try:
-            api_obj = API.objects.get(id=api_id)
-        except API.DoesNotExist:
-            return api_error(message="API not found", status_code=404)
-
-        count = APIRequestLog.usage_count(user=request.user, api=api_obj, days=days)
-        return api_success(data={"usage_count": count}, message=f"API usage count in last {days} days")
-
+        return api_success(
+            data=list(usage_data),
+            message="User API usage count fetched successfully",
+            status_code=status.HTTP_200_OK,
+        )
 
 # ==========================================
 # ADMIN API LOG LIST
 # ==========================================
 class AdminAPIRequestLogListView(generics.ListAPIView):
+    queryset = APIRequestLog.objects.all()
     serializer_class = APIRequestLogSerializer
     permission_classes = [IsAdminUser]
-    search_fields = ["user__username", "api__name", "status_code"]
+    search_fields = ["user_name", "api_name", "status_code"]
     ordering_fields = ["request_time", "status_code"]
     ordering = ["-request_time"]
-
-    def get_queryset(self):
-        queryset = APIRequestLog.objects.all()
-        user_filter = self.request.query_params.get("user")
-        api_filter = self.request.query_params.get("api")
-        status_filter = self.request.query_params.get("status_code")
-
-        if user_filter:
-            queryset = queryset.filter(user__username__icontains=user_filter)
-        if api_filter:
-            queryset = queryset.filter(api__id=api_filter)
-        if status_filter:
-            queryset = queryset.filter(status_code=status_filter)
-
-        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
-        if page:
+        if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(queryset, many=True)
         return api_success(data=serializer.data, message="Admin API logs fetched successfully")
 
-
 # ==========================================
 # ADMIN API LOG DETAIL
 # ==========================================
 class AdminAPIRequestLogDetailView(generics.RetrieveAPIView):
+    queryset = APIRequestLog.objects.filter(is_deleted=False)
     serializer_class = APIRequestLogSerializer
     permission_classes = [IsAdminUser]
-    queryset = APIRequestLog.objects.all()
-
+    
     def retrieve(self, request, *args, **kwargs):
-        log = self.get_object()
-        serializer = self.get_serializer(log)
-        return api_success(data=serializer.data, message="API log detail retrieved successfully")
-
+        instance = self.get_object()  
+        serializer = self.get_serializer(instance)
+        return api_success(data=serializer.data, message=" API logs detail successfully")
 
 # ==========================================
 # ADMIN DELETE API LOG
 # ==========================================
 class AdminAPIRequestLogDeleteView(generics.DestroyAPIView):
-    permission_classes = [IsAdminUser]
     queryset = APIRequestLog.objects.all()
+    serializer_class = APIRequestLogSerializer
+    permission_classes = [IsAdminUser]
 
     def delete(self, request, *args, **kwargs):
         log = self.get_object()
-        log.delete()
-        return api_success(message="API log deleted successfully", status_code=status.HTTP_204_NO_CONTENT)
+        log.hard_delete()
+        return api_success(message="API request log deleted", status_code=status.HTTP_204_NO_CONTENT)
+

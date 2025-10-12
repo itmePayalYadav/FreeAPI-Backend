@@ -6,3 +6,6 @@ Pillow
 djangorestframework-simplejwt
 razorpay
 stripe
+django-cors-headers
+python-decouple
+django-ckeditor

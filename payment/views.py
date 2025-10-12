@@ -52,23 +52,13 @@ class UserPaymentListView(generics.ListAPIView):
 class AdminPaymentListView(generics.ListAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [IsAdminUser]
+    
     search_fields = ["user__username", "subscription__name", "payment_method", "status"]
     ordering_fields = ["amount", "created_at"]
     ordering = ["-created_at"]
 
     def get_queryset(self):
         queryset = Payment.objects.all()
-        status_filter = self.request.query_params.get("status")
-        method_filter = self.request.query_params.get("payment_method")
-        user_filter = self.request.query_params.get("user")
-
-        if status_filter:
-            queryset = queryset.filter(status=status_filter)
-        if method_filter:
-            queryset = queryset.filter(payment_method=method_filter)
-        if user_filter:
-            queryset = queryset.filter(user__username__icontains=user_filter)
-        return queryset
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

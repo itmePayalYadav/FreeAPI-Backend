@@ -1,18 +1,28 @@
 from rest_framework import serializers
-from .models import APIRequestLog
+from logs.models import APIRequestLog
 from apis.serializers import APISerializer
 from accounts.serializers import UserSerializer
 
 class APIRequestLogSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    api = APISerializer(read_only=True)
-    
+    user_id = serializers.CharField(source="user.id", read_only=True)
+    user_name = serializers.CharField(source="user.username", read_only=True)
+    api_id = serializers.CharField(source="api.id", read_only=True)
+    api_name = serializers.CharField(source="api.name", read_only=True)
+    api_category = serializers.CharField(source="api.category_name", read_only=True)
+    api_method = serializers.CharField(source="api.method", read_only=True)
+    api_is_premium = serializers.BooleanField(source="api.is_premium", read_only=True)
+
     class Meta:
         model = APIRequestLog
         fields = [
             "id",
-            "user",
-            "api",
+            "user_id",
+            "user_name",
+            "api_id",
+            "api_name",
+            "api_category",
+            "api_method",
+            "api_is_premium",
             "request_time",
             "status_code",
             "path_params",
@@ -21,11 +31,4 @@ class APIRequestLogSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at"
         ]
-        read_only_fields = [
-            "id",
-            "user",
-            "api",
-            "request_time",
-            "created_at",
-            "updated_at"
-        ]
+        read_only_fields = fields

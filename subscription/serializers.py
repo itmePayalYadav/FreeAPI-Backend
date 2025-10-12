@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from .models import SubscriptionPlan, UserSubscription
-from apis.serializers import APISerializer
+from management.serializers import EndpointSerializer
 
 class SubscriptionPlanSerializer(serializers.ModelSerializer):
-    apis = APISerializer(many=True, read_only=True)
+    endpoint = EndpointSerializer(many=True, read_only=True)
     
     class Meta:
         model = SubscriptionPlan

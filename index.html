@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Dashboard</title>
+  <style>
+    /* -----------------------------
+       Global Styles
+    ----------------------------- */
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #f5f6fa;
+      margin: 0;
+      padding: 2rem;
+      color: #1f2937;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    /* -----------------------------
+       Table Styles
+    ----------------------------- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f3f4f6;
+      font-weight: 600;
+      color: #374151;
+      font-size: 0.875rem;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9fafb;
+    }
+
+    tr:hover {
+      background-color: #e5e7eb;
+    }
+
+    /* -----------------------------
+       Badges
+    ----------------------------- */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border-radius: 12px;
+      font-weight: 500;
+      color: #fff;
+    }
+
+    .badge-primary {
+      background-color: #3b82f6;
+    }
+
+    .badge-success {
+      background-color: #10b981;
+    }
+
+    .badge-warning {
+      background-color: #f59e0b;
+    }
+
+    .badge-danger {
+      background-color: #ef4444;
+    }
+
+    /* -----------------------------
+       Action Buttons
+    ----------------------------- */
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 4px 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-edit {
+      background-color: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-edit:hover {
+      background-color: #2563eb;
+    }
+
+    .btn-delete {
+      background-color: #ef4444;
+      color: #fff;
+    }
+
+    .btn-delete:hover {
+      background-color: #dc2626;
+    }
+
+    /* -----------------------------
+       File Link
+    ----------------------------- */
+    .file-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #3b82f6;
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .file-link:hover {
+      color: #2563eb;
+    }
+
+    /* -----------------------------
+       Table Responsive
+    ----------------------------- */
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th, td {
+        padding: 8px;
+      }
+
+      tr {
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+      }
+
+      td {
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 16px;
+        width: 45%;
+        font-weight: 600;
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Subscription Dashboard</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>No.</th>
+        <th>User</th>
+        <th>API Name</th>
+        <th>API Slug</th>
+        <th>Last Access</th>
+        <th>Usage Count</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td data-label="No.">1</td>
+        <td data-label="User">john_doe</td>
+        <td data-label="API Name"><span class="badge badge-primary">Movie Search API</span></td>
+        <td data-label="API Slug">movie-search-api</td>
+        <td data-label="Last Access">2025-10-11 13:15</td>
+        <td data-label="Usage Count"><span class="badge badge-success">12</span></td>
+        <td data-label="Actions">
+          <div class="actions">
+            <button class="btn btn-edit">Edit</button>
+            <button class="btn btn-delete">Delete</button>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <td data-label="No.">2</td>
+        <td data-label="User">alice_smith</td>
+        <td data-label="API Name"><span class="badge badge-primary">User Auth API</span></td>
+        <td data-label="API Slug">user-auth-api</td>
+        <td data-label="Last Access">2025-10-11 12:40</td>
+        <td data-label="Usage Count"><span class="badge badge-warning">5</span></td>
+        <td data-label="Actions">
+          <div class="actions">
+            <button class="btn btn-edit">Edit</button>
+            <button class="btn btn-delete">Delete</button>
+          </div>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</body>
+</html>
